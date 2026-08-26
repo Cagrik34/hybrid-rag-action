@@ -4,7 +4,8 @@
   "description": "Production-grade GitHub Action for context-grounded AI responses to Issues and PRs using Hybrid RAG (BM25 + Semantic Search + RRF).",
   "main": "src/index.js",
   "scripts": {
-    "test": "node test/retrieval.test.js"
+    "test": "node test/retrieval.test.js",
+    "build": "ncc build src/index.js -o dist --source-map --license licenses.txt"
   },
   "keywords": [
     "github-action",
@@ -27,5 +28,8 @@
   },
   "overrides": {
     "undici": "^6.27.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.45.0"
   }
 }

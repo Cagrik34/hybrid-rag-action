@@ -17,7 +17,7 @@ async function run() {
     core.info('🚀 Initializing Hybrid RAG Action...');
 
     const token = core.getInput('github-token') || process.env.GITHUB_TOKEN;
-    const docsPathInput = core.getInput('docs-path') || 'docs,README.md,CONTRIBUTING.md';
+    const docsPathInput = core.getInput('docs-path') || 'README.md,action.yml,docs,CONTRIBUTING.md';
     const triggerKeyword = core.getInput('query-trigger') || 'auto';
     const topK = parseInt(core.getInput('top-k') || '5', 10);
     const rrfK = parseInt(core.getInput('rrf-k') || '60', 10);
@@ -28,12 +28,15 @@ async function run() {
     const gh = new GitHubAdapter(token);
     const event = gh.getEventData();
 
-    if (!event.issueNumber) {
-      core.info('No active Issue or PR detected in payload. Exiting gracefully.');
-      return;
+    let userQuery = event.query;
+    const isManualRun = !event.issueNumber;
+
+    if (isManualRun) {
+      core.info('ℹ️ Manual workflow_dispatch detected. Executing diagnostic dry-run search.');
+      userQuery = 'How does the hybrid RAG architecture and reciprocal rank fusion work?';
     }
 
-    if (triggerKeyword !== 'auto' && !event.query.includes(triggerKeyword)) {
+    if (triggerKeyword !== 'auto' && !userQuery.includes(triggerKeyword) && !isManualRun) {
       core.info(`Query does not contain trigger keyword '${triggerKeyword}'. Skipping.`);
       return;
     }
@@ -49,7 +52,7 @@ async function run() {
         if (stats.isDirectory()) {
           const files = fs.readdirSync(target);
           for (const file of files) {
-            if (file.endsWith('.md') || file.endsWith('.mdx') || file.endsWith('.txt')) {
+            if (file.endsWith('.md') || file.endsWith('.mdx') || file.endsWith('.txt') || file.endsWith('.yml') || file.endsWith('.yaml')) {
               const fullPath = path.join(target, file);
               const content = fs.readFileSync(fullPath, 'utf8');
               allChunks.push(...chunker.chunkMarkdown(content, path.relative(process.cwd(), fullPath)));
@@ -72,13 +75,13 @@ async function run() {
     core.info('🔍 Executing Okapi BM25 Sparse Search...');
     const bm25 = new BM25Index();
     bm25.buildIndex(allChunks);
-    const bm25Results = bm25.search(event.query, topK * 2);
+    const bm25Results = bm25.search(userQuery, topK * 2);
 
     // 2. Dense Semantic Vector Search
     core.info('🧠 Executing Dense Semantic Vector Search...');
     const vectorIndex = new DenseVectorIndex();
     vectorIndex.buildIndex(allChunks);
-    const denseResults = vectorIndex.search(event.query, topK * 2);
+    const denseResults = vectorIndex.search(userQuery, topK * 2);
 
     // 3. Reciprocal Rank Fusion
     core.info('⚡ Fusing search modalities via RRF...');
@@ -91,15 +94,19 @@ async function run() {
     // 4. Grounded Inference
     core.info(`🤖 Generating grounded answer using ${llmProvider} (${modelName})...`);
     const llm = new LLMClient({ provider: llmProvider, apiKey, model: modelName });
-    const answerMarkdown = await llm.generateGroundedAnswer(event.query, topContext);
+    const answerMarkdown = await llm.generateGroundedAnswer(userQuery, topContext);
 
-    // 5. Post to GitHub
-    const finalComment = `${answerMarkdown}\n\n---\n*⚡ Powered by [Hybrid RAG Action](https://github.com/Cagrik34/hybrid-rag-action) (BM25 + Semantic Vector Fusion)*`;
-    await gh.postComment(event.issueNumber, finalComment);
+    if (event.issueNumber) {
+      const finalComment = `${answerMarkdown}\n\n---\n*⚡ Powered by [Hybrid RAG Action](https://github.com/Cagrik34/hybrid-rag-action) (BM25 + Semantic Vector Fusion)*`;
+      await gh.postComment(event.issueNumber, finalComment);
+      core.info(`✅ Successfully responded to Issue/PR #${event.issueNumber}.`);
+    } else {
+      core.info('✅ Diagnostic dry-run complete. Generated grounded answer:');
+      core.info(answerMarkdown);
+    }
 
     core.setOutput('retrieved-chunks-count', topContext.length);
     core.setOutput('response-status', 'success');
-    core.info('✅ Successfully responded to Issue/PR.');
   } catch (error) {
     core.setFailed(`Action failed with error: ${error.message}`);
   }

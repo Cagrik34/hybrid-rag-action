@@ -17,7 +17,7 @@ inputs:
   docs-path:
     description: 'Relative path or glob directory containing repository documentation to index.'
     required: false
-    default: 'docs,README.md,CONTRIBUTING.md'
+    default: 'README.md,action.yml,docs,CONTRIBUTING.md'
   llm-provider:
     description: 'Inference backend provider: "github-models", "openai", "azure", or "custom".'
     required: false
@@ -47,4 +47,4 @@ outputs:
 
 runs:
   using: 'node24'
-  main: 'src/index.js'
+  main: 'dist/index.js'

@@ -1,0 +1,23 @@
+name: 🧪 CI & Retrieval Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: ⚡ Unit Tests & Algorithm Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20+
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🧪 Execute Test Suite
+        run: node test/retrieval.test.js

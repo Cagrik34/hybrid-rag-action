@@ -1,0 +1,50 @@
+name: 'Hybrid RAG Issue & PR Assistant'
+description: 'Context-grounded repository AI assistant using Hybrid RAG (BM25 + Semantic Vector Search + Reciprocal Rank Fusion).'
+author: 'Cagrik34'
+branding:
+  icon: 'cpu'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token with contents:read and issues/pull-requests:write permissions.'
+    required: true
+    default: '${{ github.token }}'
+  query-trigger:
+    description: 'Trigger keyword to activate the assistant in issue/PR comments (e.g., "@rag-bot", "auto").'
+    required: false
+    default: 'auto'
+  docs-path:
+    description: 'Relative path or glob directory containing repository documentation to index.'
+    required: false
+    default: 'docs,README.md,CONTRIBUTING.md'
+  llm-provider:
+    description: 'Inference backend provider: "github-models", "openai", "azure", or "custom".'
+    required: false
+    default: 'github-models'
+  model-name:
+    description: 'Model identifier (e.g., "Phi-4", "gpt-4o-mini", "Mistral-large").'
+    required: false
+    default: 'Phi-4'
+  api-key:
+    description: 'API key for the chosen LLM provider (can use GITHUB_TOKEN for GitHub Models).'
+    required: false
+    default: '${{ github.token }}'
+  top-k:
+    description: 'Number of top retrieved passages to fuse and supply in prompt context.'
+    required: false
+    default: '5'
+  rrf-k:
+    description: 'Reciprocal Rank Fusion constant (standard default is 60).'
+    required: false
+    default: '60'
+
+outputs:
+  retrieved-chunks-count:
+    description: 'Number of relevant chunks retrieved and fused.'
+  response-status:
+    description: 'Execution status of the assistant comment.'
+
+runs:
+  using: 'node20'
+  main: 'src/index.js'

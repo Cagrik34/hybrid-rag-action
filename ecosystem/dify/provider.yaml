@@ -1,0 +1,20 @@
+identity:
+  name: hybrid_rag_github_triage
+  author: Cagrik34
+  label:
+    en_US: Hybrid RAG GitHub Triage
+    zh_Hans: GitHub 混合检索分流工具
+description:
+  en_US: Zero-dependency hybrid lexical and semantic retrieval tool for automated GitHub issue and PR triage.
+  zh_Hans: 基于BM25和语义向量RRF融合的GitHub Issue/PR智能分流工具。
+parameters:
+  - name: repository
+    type: string
+    required: true
+    label:
+      en_US: Repository Name (owner/repo)
+  - name: query
+    type: string
+    required: true
+    label:
+      en_US: Issue or Question Query

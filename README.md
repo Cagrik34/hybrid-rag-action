@@ -96,3 +96,19 @@ npm test
 
 ## 📄 License
 Released under the [MIT License](LICENSE). Built with ❤️ by [Çağrı Giray Keşan](https://github.com/Cagrik34).
+
+---
+
+## 🌐 Tier-2 AI Giant Ecosystem Integrations
+
+`hybrid-rag-action` includes modular integrations for the leading AI frameworks:
+
+| Framework | Tier | Module | Capabilities |
+| :--- | :---: | :--- | :--- |
+| **[LangChain & LangGraph](https://github.com/langchain-ai/langchain)** | 100k+ ⭐ | `ecosystem.langchain` | `BaseRetriever` + Agent tool with BM25 + Dense RRF ($k=60$) |
+| **[LlamaIndex](https://github.com/run-llama/llama_index)** | 42k+ ⭐ | `ecosystem.llamaindex` | Custom retriever for LlamaHub issue & PR automated triage |
+| **[Dify.ai](https://github.com/langgenius/dify)** | 65k+ ⭐ | `ecosystem.dify` | Native Tool Provider plugin for visual RAG workflows |
+| **[Deepset Haystack](https://github.com/deepset-ai/haystack)** | 18k+ ⭐ | `ecosystem.haystack` | Haystack 2.0 pipeline component for AST line citation fusion |
+| **[Stanford DSPy](https://github.com/stanfordnlp/dspy)** | 24k+ ⭐ | `ecosystem.dspy` | Declarative RAG module with programmatic assertion guarantees |
+
+See [`ecosystem/`](./ecosystem) for runnable source implementations and test suites.

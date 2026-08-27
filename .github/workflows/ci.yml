@@ -14,11 +14,6 @@ on:
       - '**/*.py'
       - '**/*.json'
       - '.github/workflows/ci.yml'
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'LICENSE'
-      - '.gitignore'
   pull_request:
     branches: [main]
     paths:
@@ -32,11 +27,6 @@ on:
       - '**/*.py'
       - '**/*.json'
       - '.github/workflows/ci.yml'
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'LICENSE'
-      - '.gitignore'
   workflow_dispatch:
 
 permissions:

@@ -3,8 +3,40 @@ name: 🚀 Hybrid RAG CI & Quality Matrix
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'ecosystem/**'
+      - 'test/**'
+      - 'action.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '**/*.js'
+      - '**/*.py'
+      - '**/*.json'
+      - '.github/workflows/ci.yml'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
   pull_request:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'ecosystem/**'
+      - 'test/**'
+      - 'action.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '**/*.js'
+      - '**/*.py'
+      - '**/*.json'
+      - '.github/workflows/ci.yml'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
   workflow_dispatch:
 
 permissions:

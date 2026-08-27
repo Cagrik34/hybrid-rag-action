@@ -1,4 +1,4 @@
-name: 🧪 Automated CI & Quality Assurance
+name: 🚀 Hybrid RAG CI & Quality Matrix
 
 on:
   push:
@@ -11,13 +11,14 @@ permissions:
   contents: read
 
 jobs:
-  test-and-audit:
-    name: ⚡ Test & Security Matrix (Node ${{ matrix.node-version }} on ${{ matrix.os }})
+  test-matrix:
+    name: 🧪 CI Matrix (Node ${{ matrix.node-version }} + Py ${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [22.x, 24.x]
+        node-version: ['20.x', '22.x']
+        python-version: ['3.11', '3.12']
 
     steps:
       - name: 📥 Checkout Repository
@@ -29,11 +30,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: 📦 Install Dependencies
+      - name: 🐍 Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 📦 Install NPM Dependencies
         run: npm install
 
-      - name: 🔒 Security Vulnerability Audit
+      - name: 🛡️ Security Vulnerability Audit
         run: npm audit --audit-level=high
 
-      - name: 🧪 Execute Hybrid RAG Verification Suite
+      - name: ⚡ Run Node.js Core Retrieval Test Suite
         run: npm test
+
+      - name: 🧪 Run Python Ecosystem Adapters Test Suite
+        run: python -m unittest ecosystem.test_ecosystem_integrations

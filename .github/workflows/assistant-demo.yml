@@ -16,14 +16,14 @@ permissions:
 
 jobs:
   run-assistant:
-    name: ⚡ Grounded AI Response
+    name: 💡 Grounded AI Response
     runs-on: ubuntu-latest
     if: ${{ !github.event.issue.pull_request || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: 📥 Checkout Repository Context
         uses: actions/checkout@v4
 
-      - name: 🚀 Run Local Hybrid RAG Action
+      - name: ⚡ Run Local Hybrid RAG Action
         uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

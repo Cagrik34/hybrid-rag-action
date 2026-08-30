@@ -1,0 +1,45 @@
+name: Automated Daily Health & Benchmark Telemetry
+
+on:
+  schedule:
+    - cron: '15 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  telemetry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Test Suite
+        run: npm test
+
+      - name: Execute Benchmark Telemetry
+        run: node scripts/benchmark-telemetry.js
+
+      - name: Commit & Push Daily Telemetry
+        run: |
+          git config user.name "Çağrı Giray Keşan"
+          git config user.email "cagrigiraykesan@gmail.com"
+          git add telemetry/
+          if git diff --staged --quiet; then
+            echo "No telemetry changes detected."
+          else
+            git commit -m "chore(telemetry): record automated daily hybrid RAG benchmark [skip ci]"
+            git push origin main
+          fi

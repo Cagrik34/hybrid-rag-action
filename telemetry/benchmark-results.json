@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-08-30T23:19:44.824Z",
+  "status": "HEALTHY",
+  "nodeVersion": "v22.23.2",
+  "metrics": {
+    "avgTokenizationLatencyMs": 0.0021,
+    "avgBM25ScoreLatencyMs": 0.00747,
+    "avgDenseSearchLatencyMs": 0.01866,
+    "avgRRFFusionLatencyMs": 0.00195,
+    "heapUsedMB": 4.52,
+    "heapTotalMB": 6.6
+  },
+  "retrievalIntegrity": {
+    "astGrounding": "VERIFIED",
+    "rrfConstant": 60,
+    "fts5Compatibility": "COMPLIANT"
+  }
+}

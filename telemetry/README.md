@@ -1,6 +1,6 @@
 # 📊 Automated Hybrid RAG Telemetry & Benchmark Report
 
-**Last Execution:** `2026-10-29T08:24:31.639Z`  
+**Last Execution:** `2026-10-30T08:34:10.186Z`  
 **System Status:** `HEALTHY ✅`  
 **Runtime:** `Node.js v22.23.4`
 
@@ -8,11 +8,11 @@
 
 | Benchmark Component | Latency / Metric | Unit |
 |---|---|---|
-| **Query Tokenization** | `0.00135` | ms |
-| **BM25 Lexical Scorer** | `0.0062` | ms |
-| **Dense Vector Scorer** | `0.01213` | ms |
-| **RRF Rank Fusion (k=60)** | `0.00141` | ms |
-| **V8 Heap Memory** | `4.28 MB / 6.6 MB` | MB |
+| **Query Tokenization** | `0.00162` | ms |
+| **BM25 Lexical Scorer** | `0.00493` | ms |
+| **Dense Vector Scorer** | `0.01352` | ms |
+| **RRF Rank Fusion (k=60)** | `0.00134` | ms |
+| **V8 Heap Memory** | `4.41 MB / 6.6 MB` | MB |
 
 ## 🛡️ Retrieval Architecture Verification
 - **AST Grounding:** `VERIFIED`

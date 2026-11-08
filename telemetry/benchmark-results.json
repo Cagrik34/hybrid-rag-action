@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-11-07T08:42:58.157Z",
+  "timestamp": "2026-11-08T08:56:13.238Z",
   "status": "HEALTHY",
   "nodeVersion": "v22.23.4",
   "metrics": {
-    "avgTokenizationLatencyMs": 0.00143,
-    "avgBM25ScoreLatencyMs": 0.00379,
-    "avgDenseSearchLatencyMs": 0.01199,
-    "avgRRFFusionLatencyMs": 0.00097,
-    "heapUsedMB": 4.35,
+    "avgTokenizationLatencyMs": 0.00161,
+    "avgBM25ScoreLatencyMs": 0.00484,
+    "avgDenseSearchLatencyMs": 0.01369,
+    "avgRRFFusionLatencyMs": 0.0013,
+    "heapUsedMB": 4.16,
     "heapTotalMB": 6.6
   },
   "retrievalIntegrity": {

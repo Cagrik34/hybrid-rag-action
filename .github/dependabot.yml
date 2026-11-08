@@ -5,9 +5,6 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 10
-    labels:
-      - 'dependencies'
-      - 'javascript'
     groups:
       npm-patches:
         patterns:
@@ -25,9 +22,6 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 10
-    labels:
-      - 'dependencies'
-      - 'github-actions'
     groups:
       actions-patches:
         patterns:

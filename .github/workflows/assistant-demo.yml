@@ -13,6 +13,7 @@ permissions:
   contents: read
   issues: write
   pull-requests: write
+  models: read
 
 jobs:
   run-assistant:
@@ -29,5 +30,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           docs-path: 'README.md,action.yml'
           query-trigger: 'auto'
-          llm-provider: 'github-models'
           model-name: 'Phi-4'

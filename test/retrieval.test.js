@@ -1,5 +1,5 @@
 /**
- * Comprehensive Unit and Retrieval Test Suite for Hybrid RAG Engine.
+ * Core retrieval verification checks for the Hybrid RAG engine.
  */
 
 const assert = require('assert');
@@ -68,4 +68,4 @@ assert.strictEqual(chunks[1].metadata.section, 'Architecture');
 assert(chunks[1].text.includes('hybrid RAG architecture'));
 console.log('  ✅ Chunker test passed.\n');
 
-console.log('🎉 ALL 5 TEST SUITES PASSED FLAWLESSLY (100% SUCCESS)!');
+console.log('✅ All 5 core retrieval checks passed.');

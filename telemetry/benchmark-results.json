@@ -11,8 +11,8 @@
     "heapTotalMB": 6.6
   },
   "retrievalIntegrity": {
-    "astGrounding": "VERIFIED",
+    "structureAwareGrounding": "VERIFIED",
     "rrfConstant": 60,
-    "fts5Compatibility": "COMPLIANT"
+    "codeFenceProtection": "COMPLIANT"
   }
 }

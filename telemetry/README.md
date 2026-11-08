@@ -15,9 +15,9 @@
 | **V8 Heap Memory** | `4.16 MB / 6.6 MB` | MB |
 
 ## 🛡️ Retrieval Architecture Verification
-- **AST Grounding:** `VERIFIED`
+- **Structure-Aware Grounding:** `VERIFIED`
 - **Reciprocal Rank Fusion Constant:** `k = 60`
-- **SQLite FTS5 Compliant:** `COMPLIANT`
+- **Code-Fence Awareness:** `COMPLIANT`
 
 ---
 *Generated automatically via daily telemetry sentinel cron.*

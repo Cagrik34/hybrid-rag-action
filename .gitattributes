@@ -1,0 +1,19 @@
+# Enforce LF endings on text files to ensure reproducible builds across OS environments
+* text=auto eol=lf
+
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.txt text eol=lf
+*.map text eol=lf
+
+dist/* -whitespace
+dist/** -whitespace
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary

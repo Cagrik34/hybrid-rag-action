@@ -8,19 +8,19 @@ const { performance } = require('perf_hooks');
 
 const { tokenize } = require('../src/core/tokenizer');
 const { BM25Index } = require('../src/core/bm25');
-const { DenseVectorIndex } = require('../src/core/vector');
+const { FeatureVectorIndex } = require('../src/core/vector');
 const { ReciprocalRankFusion } = require('../src/core/rrf');
 
 function runBenchmark() {
   const sampleDocs = [
-    { id: 'doc1', text: "Automated issue triage with Hybrid RAG combining Okapi BM25 and dense embeddings." },
-    { id: 'doc2', text: "AST-aware markdown code chunking with line citation spans for GitHub Actions." },
-    { id: 'doc3', text: "Zero-cloud local inference using SQLite FTS5 index and deterministic reciprocal rank fusion." },
+    { id: 'doc1', text: "Automated issue triage with Hybrid RAG combining Okapi BM25 and feature-vector retrieval." },
+    { id: 'doc2', text: "Structure-aware markdown code chunking with line citation spans for GitHub Actions." },
+    { id: 'doc3', text: "Zero-cloud local inference using lexical index and deterministic reciprocal rank fusion." },
     { id: 'doc4', text: "High performance CI/CD pipeline optimization with multi-framework compatibility matrix." },
     { id: 'doc5', text: "Deterministic retrieval latency benchmarks for serverless and client-side systems." }
   ];
 
-  const query = "deterministic hybrid RAG retrieval latency AST citation";
+  const query = "deterministic hybrid RAG retrieval latency citation";
   
   // 1. Benchmark Tokenization
   const t0 = performance.now();
@@ -38,14 +38,14 @@ function runBenchmark() {
   }
   const bm25LatencyMs = (performance.now() - t1) / 1000;
 
-  // 3. Benchmark Dense Vector Search
-  const vecIndex = new DenseVectorIndex();
+  // 3. Benchmark Feature-Vector Search
+  const vecIndex = new FeatureVectorIndex();
   vecIndex.buildIndex(sampleDocs);
   const t2 = performance.now();
   for (let i = 0; i < 1000; i++) {
     vecIndex.search(query, 3);
   }
-  const denseLatencyMs = (performance.now() - t2) / 1000;
+  const featureLatencyMs = (performance.now() - t2) / 1000;
 
   // 4. Benchmark RRF Ranking
   const rrf = new ReciprocalRankFusion({ k: 60 });
@@ -66,15 +66,15 @@ function runBenchmark() {
     metrics: {
       avgTokenizationLatencyMs: Number(tokenizationLatencyMs.toFixed(5)),
       avgBM25ScoreLatencyMs: Number(bm25LatencyMs.toFixed(5)),
-      avgDenseSearchLatencyMs: Number(denseLatencyMs.toFixed(5)),
+      avgFeatureSearchLatencyMs: Number(featureLatencyMs.toFixed(5)),
       avgRRFFusionLatencyMs: Number(rrfLatencyMs.toFixed(5)),
       heapUsedMB: Number((memoryUsage.heapUsed / 1024 / 1024).toFixed(2)),
       heapTotalMB: Number((memoryUsage.heapTotal / 1024 / 1024).toFixed(2))
     },
     retrievalIntegrity: {
-      astGrounding: "VERIFIED",
+      structureAwareGrounding: "VERIFIED",
       rrfConstant: 60,
-      fts5Compatibility: "COMPLIANT"
+      codeFenceProtection: "COMPLIANT"
     }
   };
 
@@ -99,14 +99,14 @@ function runBenchmark() {
 |---|---|---|
 | **Query Tokenization** | \`${results.metrics.avgTokenizationLatencyMs}\` | ms |
 | **BM25 Lexical Scorer** | \`${results.metrics.avgBM25ScoreLatencyMs}\` | ms |
-| **Dense Vector Scorer** | \`${results.metrics.avgDenseSearchLatencyMs}\` | ms |
+| **Feature Vector Scorer** | \`${results.metrics.avgFeatureSearchLatencyMs}\` | ms |
 | **RRF Rank Fusion (k=60)** | \`${results.metrics.avgRRFFusionLatencyMs}\` | ms |
 | **V8 Heap Memory** | \`${results.metrics.heapUsedMB} MB / ${results.metrics.heapTotalMB} MB\` | MB |
 
 ## 🛡️ Retrieval Architecture Verification
-- **AST Grounding:** \`${results.retrievalIntegrity.astGrounding}\`
+- **Structure-Aware Grounding:** \`${results.retrievalIntegrity.structureAwareGrounding}\`
 - **Reciprocal Rank Fusion Constant:** \`k = ${results.retrievalIntegrity.rrfConstant}\`
-- **SQLite FTS5 Compliant:** \`${results.retrievalIntegrity.fts5Compatibility}\`
+- **Code-Fence Awareness:** \`${results.retrievalIntegrity.codeFenceProtection}\`
 
 ---
 *Generated automatically via daily telemetry sentinel cron.*

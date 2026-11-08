@@ -1,5 +1,5 @@
 name: 'Hybrid RAG Issue & PR Assistant'
-description: 'Context-grounded repository AI assistant using Hybrid RAG (BM25 + Semantic Vector Search + Reciprocal Rank Fusion).'
+description: 'Context-grounded repository AI assistant using Hybrid RAG (BM25 + Feature-Vector Retrieval + Reciprocal Rank Fusion) with GitHub Models inference.'
 author: 'Cagrik34'
 branding:
   icon: 'cpu'
@@ -7,7 +7,7 @@ branding:
 
 inputs:
   github-token:
-    description: 'GitHub token with contents:read and issues/pull-requests:write permissions.'
+    description: 'GitHub token used for GitHub Models inference and for posting responses to Issues and Pull Requests. Requires contents:read, issues:write, pull-requests:write, and models:read permissions.'
     required: true
     default: '${{ github.token }}'
   query-trigger:
@@ -15,27 +15,19 @@ inputs:
     required: false
     default: 'auto'
   docs-path:
-    description: 'Relative path or glob directory containing repository documentation to index.'
+    description: 'Comma-separated repository relative paths or directories containing documentation to recursively index.'
     required: false
     default: 'README.md,action.yml,docs,CONTRIBUTING.md'
-  llm-provider:
-    description: 'Inference backend provider: "github-models", "openai", "azure", or "custom".'
-    required: false
-    default: 'github-models'
   model-name:
-    description: 'Model identifier (e.g., "Phi-4", "gpt-4o-mini", "Mistral-large").'
+    description: 'GitHub Models model identifier (e.g., "Phi-4", "gpt-4o-mini").'
     required: false
     default: 'Phi-4'
-  api-key:
-    description: 'API key for the chosen LLM provider (can use GITHUB_TOKEN for GitHub Models).'
-    required: false
-    default: '${{ github.token }}'
   top-k:
-    description: 'Number of top retrieved passages to fuse and supply in prompt context.'
+    description: 'Number of top retrieved passages to fuse and supply in prompt context (integer between 1 and 100; capped at a 32,000-character context budget).'
     required: false
     default: '5'
   rrf-k:
-    description: 'Reciprocal Rank Fusion constant (standard default is 60).'
+    description: 'Reciprocal Rank Fusion constant (integer between 1 and 1000, default: 60).'
     required: false
     default: '60'
 
@@ -43,7 +35,7 @@ outputs:
   retrieved-chunks-count:
     description: 'Number of relevant chunks retrieved and fused.'
   response-status:
-    description: 'Execution status of the assistant comment.'
+    description: 'Execution status of the assistant: "success" (GitHub Models inference succeeded), "fallback" (deterministic local fallback used), "skipped" (ignored trigger or unsupported event), or "failed" (unrecoverable error).'
 
 runs:
   using: 'node24'

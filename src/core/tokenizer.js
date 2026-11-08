@@ -1,5 +1,14 @@
 /**
- * High-performance lexical tokenizer with stopword filtering and normalization.
+ * Lexical tokenizer with Unicode multilingual support, stopword filtering, and normalization.
+ *
+ * Unicode Normalization & Script Behavior:
+ * - Normalizes text to lowercase using Unicode-aware String.prototype.toLowerCase().
+ * - Matches Unicode letters (\p{L}) and numbers (\p{N}) across all language scripts
+ *   (e.g., Latin, Turkish, Cyrillic, Greek, CJK, Arabic, etc.), preserving underscores
+ *   and hyphens for code identifiers and version strings.
+ * - Non-alphanumeric punctuation and symbols are treated as token separators.
+ * - Tokens consisting exclusively of hyphens or underscores (e.g. "-", "--", "___") are discarded.
+ * - Standard English stopwords are filtered when removeStopWords is true.
  */
 
 const STOP_WORDS = new Set([
@@ -25,14 +34,20 @@ const STOP_WORDS = new Set([
   'yourself', 'yourselves'
 ]);
 
+/**
+ * Tokenizes input string into normalized lexical tokens.
+ * @param {string} text Input text
+ * @param {boolean} [removeStopWords=true] Whether to filter common English stopwords
+ * @returns {string[]} Array of normalized tokens
+ */
 function tokenize(text, removeStopWords = true) {
   if (!text || typeof text !== 'string') return [];
   
   const tokens = text
     .toLowerCase()
-    .replace(/[^a-z0-9_-]/g, ' ')
+    .replace(/[^\p{L}\p{N}_-]+/gu, ' ')
     .split(/\s+/)
-    .filter(t => t.length > 0);
+    .filter(t => t.length > 0 && !/^[-_]+$/.test(t));
 
   if (!removeStopWords) return tokens;
   return tokens.filter(t => !STOP_WORDS.has(t));

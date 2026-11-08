@@ -1,10 +1,10 @@
 {
   "name": "hybrid-rag-action",
   "version": "1.0.0",
-  "description": "Production-grade GitHub Action for context-grounded AI responses to Issues and PRs using Hybrid RAG (BM25 + Semantic Search + RRF).",
+  "description": "Production-grade GitHub Action for context-grounded AI responses to Issues and PRs using Hybrid RAG (BM25 + deterministic feature-vector retrieval + RRF).",
   "main": "src/index.js",
   "scripts": {
-    "test": "node test/retrieval.test.js",
+    "test": "node --test",
     "build": "ncc build src/index.js -o dist --source-map --license licenses.txt"
   },
   "keywords": [
@@ -24,10 +24,10 @@
     "@actions/github": "^6.0.0"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "overrides": {
-    "undici": "^6.27.1"
+    "undici": "^6.29.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.45.0"

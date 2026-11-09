@@ -1,0 +1,96 @@
+name: Bug Report
+description: Report a reproducible problem with Hybrid RAG Action.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem.
+
+        Do not include credentials, tokens, private keys, personal information, or other secrets.
+        Report suspected security vulnerabilities privately as described in SECURITY.md.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the problem clearly and concisely.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest reliable sequence that reproduces the problem.
+      placeholder: |
+        1. Configure ...
+        2. Trigger ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What behavior did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: input
+    id: action-version
+    attributes:
+      label: Action version
+      description: Specify the release tag or full commit SHA.
+      placeholder: "v1, v1.0.3, or full SHA"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runner
+    attributes:
+      label: Runner
+      options:
+        - ubuntu-latest
+        - windows-latest
+        - macos-latest
+        - Self-hosted
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant sanitized logs
+      description: Remove credentials, tokens and personal information first.
+      render: shell
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety checks
+      options:
+        - label: I removed secrets, credentials, tokens, private keys, and unrelated personal information.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
+
+  - type: checkboxes
+    id: conduct
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the repository Code of Conduct.
+          required: true

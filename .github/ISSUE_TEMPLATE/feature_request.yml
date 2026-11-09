@@ -1,0 +1,63 @@
+name: Feature Request
+description: Propose a concrete improvement to Hybrid RAG Action.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an improvement.
+
+        Describe the problem or use case first.
+        Do not include credentials, tokens, private keys, personal information, or other secrets.
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Problem or use case
+      description: What limitation, workflow, or user need would this improvement address?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the behavior you would like the project to support.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe existing approaches or workarounds you considered.
+    validations:
+      required: false
+
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility impact
+      description: Describe expected effects on inputs, outputs, workflows, releases, runners, or existing consumers.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety checks
+      options:
+        - label: This request is not a security vulnerability.
+          required: true
+        - label: I did not include secrets, credentials, tokens, private keys, or unrelated personal information.
+          required: true
+
+  - type: checkboxes
+    id: conduct
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the repository Code of Conduct.
+          required: true

@@ -42,6 +42,8 @@ jobs:
       - name: Publish Benchmark Summary
         shell: bash
         run: |
-          echo "## Automated Hybrid RAG Telemetry" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          cat telemetry/README.md >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Automated Hybrid RAG Telemetry"
+            echo ""
+            cat telemetry/README.md
+          } >> "$GITHUB_STEP_SUMMARY"

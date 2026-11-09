@@ -2,7 +2,6 @@ name: 🛡️ Sunday Ecosystem Sentinel & Framework Compatibility Hunter
 
 on:
   schedule:
-    # Every Sunday at 00:00 UTC (Runs autonomously in the cloud even when PC is off!)
     - cron: '0 0 * * 0'
   workflow_dispatch:
 
@@ -10,11 +9,18 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: ecosystem-sentinel
+  cancel-in-progress: true
+
 jobs:
   compatibility-check:
     name: 🔍 Framework Compatibility Matrix (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.11', '3.12']
 
@@ -30,10 +36,9 @@ jobs:
       - name: ⚡ Install Latest Framework Packages
         run: |
           python -m pip install --upgrade pip
-          pip install langchain llama-index dspy-ai haystack-ai dify-client pydantic --quiet || true
+          python -m pip install langchain llama-index dspy-ai haystack-ai dify-client pydantic --quiet
 
       - name: 🧪 Execute Ecosystem Adapter Compatibility Suite
-        id: test_ecosystem
         run: python -m unittest ecosystem.test_ecosystem_integrations
 
       - name: 🚨 Alert Maintainer on Compatibility Regression
@@ -45,5 +50,11 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: '⚠️ [Automated Alert] Upstream Framework Compatibility Regression Detected',
-              body: `### 🚨 Ecosystem Sentinel Alert\n\nThe automated weekly compatibility test failed on Python ${process.env.PYTHON_VERSION || '3.12'}.\n\nOne of the integrated frameworks (LangChain, LlamaIndex, Dify, Haystack, or DSPy) may have released a breaking API change.\n\n**Workflow Run:** [View Logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
+              body: `### 🚨 Ecosystem Sentinel Alert
+
+The automated weekly compatibility test failed on Python ${{ matrix.python-version }}.
+
+One of the integrated frameworks (LangChain, LlamaIndex, Dify, Haystack, or DSPy) may have released a breaking API change.
+
+**Workflow Run:** [View Logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
             })

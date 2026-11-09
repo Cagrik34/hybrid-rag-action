@@ -26,10 +26,10 @@ jobs:
 
     steps:
       - name: 📥 Checkout Repository Context
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: 🐍 Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -43,7 +43,7 @@ jobs:
 
       - name: 🚨 Alert Maintainer on Compatibility Regression
         if: failure()
-        uses: actions/github-script@v9
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
         env:
           SENTINEL_PYTHON_VERSION: ${{ matrix.python-version }}
         with:

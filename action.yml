@@ -1,5 +1,5 @@
 name: 'Hybrid RAG Issue & PR Assistant'
-description: 'Context-grounded repository AI assistant using Hybrid RAG (BM25 + Feature-Vector Retrieval + Reciprocal Rank Fusion) with GitHub Models inference.'
+description: 'Context-grounded Hybrid RAG assistant for GitHub Issues and Pull Requests using GitHub Models.'
 author: 'Cagrik34'
 branding:
   icon: 'cpu'

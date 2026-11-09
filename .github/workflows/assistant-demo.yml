@@ -22,7 +22,7 @@ jobs:
     if: ${{ !github.event.issue.pull_request || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: 📥 Checkout Repository Context
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: ⚡ Run Local Hybrid RAG Action
         uses: ./

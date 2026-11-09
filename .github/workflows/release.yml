@@ -63,9 +63,17 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          if git rev-parse "$RELEASE_VERSION" >/dev/null 2>&1; then
-            echo "Tag already exists: $RELEASE_VERSION"
-            exit 1
+          REMOTE_TAG_SHA="$(git ls-remote --tags origin "refs/tags/$RELEASE_VERSION" | cut -f1)"
+
+          if [[ -n "$REMOTE_TAG_SHA" ]]; then
+            MAIN_SHA="$(git rev-parse HEAD)"
+
+            if [[ "$REMOTE_TAG_SHA" != "$MAIN_SHA" ]]; then
+              echo "Existing release tag points to an unexpected SHA."
+              exit 1
+            fi
+
+            echo "Existing release tag already points to the validated candidate."
           fi
 
       - name: Verify package version matches release version
@@ -158,19 +166,29 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_VERSION" >/dev/null 2>&1; then
-            echo "Release tag already exists: $RELEASE_VERSION"
-            exit 1
+          RELEASE_SHA="$(git ls-remote --tags origin "refs/tags/$RELEASE_VERSION" | cut -f1)"
+
+          if [[ -z "$RELEASE_SHA" ]]; then
+            gh release create "$RELEASE_VERSION" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$VALIDATED_SHA" \
+              --title "$RELEASE_VERSION" \
+              --generate-notes
+
+            RELEASE_SHA="$(git ls-remote --tags origin "refs/tags/$RELEASE_VERSION" | cut -f1)"
+          else
+            echo "Exact release tag already exists; entering recovery mode."
+
+            if ! gh release view "$RELEASE_VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              echo "Release tag exists but GitHub Release is missing; creating release from verified tag."
+
+              gh release create "$RELEASE_VERSION" \
+                --repo "$GITHUB_REPOSITORY" \
+                --verify-tag \
+                --title "$RELEASE_VERSION" \
+                --generate-notes
+            fi
           fi
-
-          gh release create "$RELEASE_VERSION" \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$VALIDATED_SHA" \
-            --title "$RELEASE_VERSION" \
-            --generate-notes
-
-          git fetch origin "$RELEASE_VERSION"
-          RELEASE_SHA="$(git rev-list -n 1 "$RELEASE_VERSION")"
 
           if [[ "$RELEASE_SHA" != "$VALIDATED_SHA" ]]; then
             echo "Exact release tag does not point to the validated SHA."
@@ -187,9 +205,8 @@ jobs:
           VALIDATED_SHA: ${{ needs.validate-release.outputs.validated-sha }}
         run: |
           set -euo pipefail
-          git fetch origin --tags --force
-          RELEASE_SHA="$(git rev-list -n 1 "$RELEASE_VERSION")"
-          MAJOR_SHA="$(git rev-list -n 1 v1)"
+          RELEASE_SHA="$(git ls-remote --tags origin "refs/tags/$RELEASE_VERSION" | cut -f1)"
+          MAJOR_SHA="$(git ls-remote --tags origin refs/tags/v1 | cut -f1)"
 
           echo "Validated SHA: $VALIDATED_SHA"
           echo "$RELEASE_VERSION SHA: $RELEASE_SHA"

@@ -44,6 +44,8 @@ jobs:
       - name: 🚨 Alert Maintainer on Compatibility Regression
         if: failure()
         uses: actions/github-script@v9
+        env:
+          SENTINEL_PYTHON_VERSION: ${{ matrix.python-version }}
         with:
           script: |
             github.rest.issues.create({
@@ -52,7 +54,7 @@ jobs:
               title: '⚠️ [Automated Alert] Upstream Framework Compatibility Regression Detected',
               body: `### 🚨 Ecosystem Sentinel Alert
 
-The automated weekly compatibility test failed on Python ${{ matrix.python-version }}.
+The automated weekly compatibility test failed on Python ${process.env.SENTINEL_PYTHON_VERSION}.
 
 One of the integrated frameworks (LangChain, LlamaIndex, Dify, Haystack, or DSPy) may have released a breaking API change.
 

@@ -7,6 +7,11 @@ on:
         description: Release version in SemVer form, for example v1.0.3
         required: true
         type: string
+      publish:
+        description: Publish the validated release and update the major alias
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -20,6 +25,8 @@ jobs:
     name: Release Preflight Validation
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      validated-sha: ${{ steps.verified-target.outputs.sha }}
 
     steps:
       - name: Checkout main
@@ -100,10 +107,98 @@ jobs:
         run: python -m unittest ecosystem.test_ecosystem_integrations
 
       - name: Report verified target
+        id: verified-target
         shell: bash
         env:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
+          VERIFIED_SHA="$(git rev-parse HEAD)"
           echo "Release candidate: $RELEASE_VERSION"
-          echo "Verified commit: $(git rev-parse HEAD)"
+          echo "Verified commit: $VERIFIED_SHA"
+          echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
+
+  publish-release:
+    name: Publish Validated Release
+    needs: validate-release
+    if: ${{ inputs.publish }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout validated commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.validate-release.outputs.validated-sha }}
+          fetch-depth: 0
+
+      - name: Verify validated SHA is still current main
+        shell: bash
+        env:
+          VALIDATED_SHA: ${{ needs.validate-release.outputs.validated-sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main --no-tags
+          MAIN_SHA="$(git rev-parse origin/main)"
+          echo "Validated SHA: $VALIDATED_SHA"
+          echo "Current main:  $MAIN_SHA"
+          if [[ "$VALIDATED_SHA" != "$MAIN_SHA" ]]; then
+            echo "main changed after validation; refusing to publish."
+            exit 1
+          fi
+
+      - name: Publish exact release and update v1 alias
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          VALIDATED_SHA: ${{ needs.validate-release.outputs.validated-sha }}
+        run: |
+          set -euo pipefail
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_VERSION" >/dev/null 2>&1; then
+            echo "Release tag already exists: $RELEASE_VERSION"
+            exit 1
+          fi
+
+          gh release create "$RELEASE_VERSION" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$VALIDATED_SHA" \
+            --title "$RELEASE_VERSION" \
+            --generate-notes
+
+          git fetch origin "$RELEASE_VERSION"
+          RELEASE_SHA="$(git rev-list -n 1 "$RELEASE_VERSION")"
+
+          if [[ "$RELEASE_SHA" != "$VALIDATED_SHA" ]]; then
+            echo "Exact release tag does not point to the validated SHA."
+            exit 1
+          fi
+
+          git tag -f v1 "$VALIDATED_SHA"
+          git push origin refs/tags/v1 --force
+
+      - name: Verify published release integrity
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          VALIDATED_SHA: ${{ needs.validate-release.outputs.validated-sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin --tags --force
+          RELEASE_SHA="$(git rev-list -n 1 "$RELEASE_VERSION")"
+          MAJOR_SHA="$(git rev-list -n 1 v1)"
+
+          echo "Validated SHA: $VALIDATED_SHA"
+          echo "$RELEASE_VERSION SHA: $RELEASE_SHA"
+          echo "v1 SHA: $MAJOR_SHA"
+
+          if [[ "$RELEASE_SHA" != "$VALIDATED_SHA" ]]; then
+            exit 1
+          fi
+
+          if [[ "$MAJOR_SHA" != "$VALIDATED_SHA" ]]; then
+            exit 1
+          fi

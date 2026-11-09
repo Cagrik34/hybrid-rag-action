@@ -48,15 +48,19 @@ jobs:
           SENTINEL_PYTHON_VERSION: ${{ matrix.python-version }}
         with:
           script: |
-            github.rest.issues.create({
+            const body = [
+              '### 🚨 Ecosystem Sentinel Alert',
+              '',
+              `The automated weekly compatibility test failed on Python ${process.env.SENTINEL_PYTHON_VERSION}.`,
+              '',
+              'One of the integrated frameworks (LangChain, LlamaIndex, Dify, Haystack, or DSPy) may have released a breaking API change.',
+              '',
+              `**Workflow Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            ].join('\n');
+
+            await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: '⚠️ [Automated Alert] Upstream Framework Compatibility Regression Detected',
-              body: `### 🚨 Ecosystem Sentinel Alert
-
-The automated weekly compatibility test failed on Python ${process.env.SENTINEL_PYTHON_VERSION}.
-
-One of the integrated frameworks (LangChain, LlamaIndex, Dify, Haystack, or DSPy) may have released a breaking API change.
-
-**Workflow Run:** [View Logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
-            })
+              body
+            });

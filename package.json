@@ -1,6 +1,6 @@
 {
   "name": "hybrid-rag-action",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Production-grade GitHub Action for context-grounded AI responses to Issues and PRs using Hybrid RAG (BM25 + deterministic feature-vector retrieval + RRF).",
   "main": "src/index.js",
   "scripts": {

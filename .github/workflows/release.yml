@@ -34,6 +34,11 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
       - name: Validate requested version
         shell: bash
         env:
@@ -53,6 +58,23 @@ jobs:
           set -euo pipefail
           if git rev-parse "$RELEASE_VERSION" >/dev/null 2>&1; then
             echo "Tag already exists: $RELEASE_VERSION"
+            exit 1
+          fi
+
+      - name: Verify package version matches release version
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          EXPECTED_VERSION="${RELEASE_VERSION#v}"
+
+          echo "Requested release: $RELEASE_VERSION"
+          echo "Package version: v$PACKAGE_VERSION"
+
+          if [[ "$PACKAGE_VERSION" != "$EXPECTED_VERSION" ]]; then
+            echo "package.json version does not match requested release version."
             exit 1
           fi
 
